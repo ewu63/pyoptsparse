@@ -264,7 +264,10 @@ class History(object):
         if self.flag != "r":
             return
         # we remove linear constraints
-        conNames = [con for con in self.conInfo.keys() if not self.optProb.constraints[con].linear]
+        if hasattr(self.optProb, "constraints"):
+            conNames = [con for con in self.conInfo.keys() if not self.optProb.constraints[con].linear]
+        else:
+            conNames = []
         return copy.deepcopy(conNames)
 
     def getObjNames(self):
@@ -456,7 +459,7 @@ class History(object):
         objDict = {}
         # these require funcs which may not always be there
         if "funcs" in d.keys():
-            for con in list(self.optProb.constraints.keys()):
+            for con in list(self.conNames):
                 # linear constraints are not stored in funcs
                 if not self.optProb.constraints[con].linear:
                     conDict[con] = d["funcs"][con]
